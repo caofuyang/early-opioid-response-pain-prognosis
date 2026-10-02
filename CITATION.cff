@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the associated manuscript and this repository."
+title: "Analysis code for: Pain response after early postoperative opioid administration and subsequent pain burden"
+authors:
+  - family-names: Cao
+    given-names: Fuyang
+    orcid: "https://orcid.org/0000-0002-3746-8489"
+version: 1.0.0
+date-released: 2026-10-02
+license: MIT
+repository-code: "https://github.com/caofuyang/early-opioid-response-pain-prognosis"
