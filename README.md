@@ -1,6 +1,6 @@
-# Reproducibility code: early opioid-associated pain response
+# Reproducibility code: early opioid response and later pain burden after surgery
 
-This repository contains the analysis code accompanying the manuscript "Pain response after early postoperative opioid administration and subsequent pain burden" (Regional Anesthesia & Pain Medicine). It covers MOVER cohort construction, association and sensitivity analyses, temporal evaluation, the frozen 2021 test, directional MIMIC-IV replication, statistical checks, and figure generation.
+This repository contains the analysis code for the study "Early opioid response and later pain burden after surgery: a consistent association that does not justify opioid escalation". It covers MOVER cohort construction, association and sensitivity analyses, temporal evaluation, the frozen 2021 test, directional MIMIC-IV replication, statistical checks, and figure generation.
 
 ## Data are not included
 
@@ -43,5 +43,5 @@ Python 3.11 or later is recommended. Install dependencies with:
 
     ## Citation and licence
 
-    Released under the MIT licence (see `LICENSE`). Citation metadata are provided in `CITATION.cff`. This version is archived on Zenodo: https://doi.org/10.5281/zenodo.23095908
+    Released under the MIT licence (see `LICENSE`). Citation metadata are provided in `CITATION.cff`. This software is archived on Zenodo under the concept DOI https://doi.org/10.5281/zenodo.23095907, which always resolves to the latest version.
     
