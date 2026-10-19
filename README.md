@@ -1,47 +1,55 @@
-# Reproducibility code: early opioid response and later pain burden after surgery
+# Analysis code — previous opioid response and subsequent pain relief
 
-This repository contains the analysis code for the study "Early opioid response and later pain burden after surgery: a consistent association that does not justify opioid escalation". It covers MOVER cohort construction, association and sensitivity analyses, temporal evaluation, the frozen 2021 test, directional MIMIC-IV replication, statistical checks, and figure generation.
+This repository reproduces the analyses reported in:
 
-## Data are not included
+> Previous opioid response and subsequent pain relief in perioperative and intensive care cohorts: a retrospective two-database study
 
-No patient-level or row-level derived data are included. MOVER and MIMIC-IV access is controlled by their respective data-use agreements. Users must obtain the source datasets independently and comply with all training, credentialing, privacy, and institutional requirements.
+It contains no patient-level data. MOVER and MIMIC-IV are available to credentialed researchers under their respective data-use agreements.
 
-## Configuration
+## Inputs (derived tables produced upstream)
 
-Python 3.11 or later is recommended. Install dependencies with:
+| File | Description |
+|---|---|
+| `data/MOVER/derived/early_analgesic_response_cohort_stage3.parquet` | eligible index doses (one row per case) |
+| `data/MOVER/derived/postop_opioid_doses_24h_stage2.parquet` | opioid doses in the 24 h after anaesthesia |
+| `data/MOVER/derived/postop_pain_scores_stage1.parquet` | time-stamped pain scores |
+| `data/MIMIC-IV/derived/early_analgesic_response_external_stage2.parquet` | eligible index doses (one row per stay) |
+| `data/MIMIC-IV/derived/opioid_boluses_external_stage1.parquet` | intravenous morphine and hydromorphone boluses |
+| `data/MIMIC-IV/derived/pain_scores_external_stage1.parquet` | bedside pain scores |
 
-    python -m pip install -r requirements.txt
+Point `MOVER_DERIVED`, `MIMIC_DERIVED` and `PAIN_RESPONSE_RESULTS` at your own paths if these differ.
 
-    The scripts use environment variables rather than machine-specific paths. Copy `config.example.env` to your preferred environment configuration and set the paths for your authorized local copies of MOVER and MIMIC-IV. The default expected layout is documented in `DATA_NOT_INCLUDED.md`.
+## Run order
 
-    ## Run order
+```bash
+pip install -r requirements.txt
 
-    Run from the `scripts` directory so that `config.py` is importable:
+python scripts/20_rebuild_mover_episodes.py     # MOVER episodes (audited rules)
+python scripts/21_rebuild_mimic_episodes.py     # MIMIC-IV episodes
+python scripts/26_models_v3.py                  # proportions, bootstrap CIs, models
+python scripts/28_baseline_intervening_audit.py # baseline-window audit
+python scripts/29_cluster_cis.py                # supplementary and panel B CIs
+python scripts/30_route_window_sensitivity.py   # route-specific window sensitivity
+python scripts/27_figure1_flow.py               # Figure 1
+python scripts/25_figures_v3.py                 # Figure 2
+```
 
-    1. `01_extract_mover_postop_pain_opioids.py`
-    2. `02_build_mover_response_pairs.py`
-    3. `03_build_mover_analysis_cohort.py`
-    4. `04_temporal_evaluation.py`
-    5. `05_confounding_sensitivity.py`
-    6. `06_locked_2021_test.py`
-    7. `07_extract_mimic_external.py`
-    8. `08_build_mimic_replication.py`
-    9. `09_baseline_table.py`
-    10. `10_submission_statistical_checks.py`
-    11. `11_main_figures.py`
-    12. `12_supplementary_figures.py`
+## Outputs
 
-    Scripts 07-08 can be run independently after authorized MIMIC-IV data have been placed in the configured location. Outputs are written below `PAIN_RESPONSE_RESULTS`; derived MOVER and MIMIC files are written below their configured derived directories.
+`results/pain_response_v2/` receives the episode tables, `models_v31.csv`, `baseline_audit_*.csv`, `panelB_cluster.csv`, `table_S1–S3.csv`, `route_window_summary.csv` and the audit table. Figures are written to `results/figures/` (PNG 300 dpi, PDF, TIFF 600 dpi).
 
-    ## Reproducibility scope
+## Note on earlier scripts
 
-    The code is provided to document the implemented analysis. Exact reruns require the same database versions, source-table layouts, and data-use permissions described in the manuscript. The archive does not transfer permission to use either database.
+`scripts/01`–`14` in the repository are from the earlier submission of this dataset and are retained for provenance. The pipeline described above uses `scripts/20`–`30`.
 
-    ## Randomness
+## Quality-control scripts
 
-    Bootstrap and model-evaluation scripts use the fixed seed `20260827` where stochastic resampling is performed.
+`98_manuscript_qa.py` checks wording, citation numbering, abstract length, section completeness and word count. `99_crossref_audit.py` checks that every table, figure and supplementary item cited in the manuscript exists.
 
-    ## Citation and licence
+## Software
 
-    Released under the MIT licence (see `LICENSE`). Citation metadata are provided in `CITATION.cff`. This software is archived on Zenodo under the concept DOI https://doi.org/10.5281/zenodo.23095907, which always resolves to the latest version.
-    
+Python 3.10; duckdb, pandas, numpy, statsmodels, matplotlib, pyarrow. Exact versions used for the submitted analysis are listed in `requirements.txt`.
+
+## Licence
+
+MIT. See `LICENSE`.
